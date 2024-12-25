@@ -5,10 +5,13 @@ import { Server } from 'socket.io';
 import User from './models/User.js';
 import Cryptr from 'cryptr';
 import { config } from 'dotenv';
-
 config();
+
+
+const userSocketMap = new Map();
+let io;
 const setupSocket = (server) => {
-    const io = new Server(
+    io = new Server(
         server, {
         cors: {
             origin: process.env.FRONTEND_URL,
@@ -18,7 +21,6 @@ const setupSocket = (server) => {
     })
     const cryptr = new Cryptr(`${process.env.CRYPTR_SECRET}`);
 
-    const userSocketMap = new Map();
     const disconnect = (socket) => {
         // console.log(`user disconnected with socket Id: ${socket.id}`)
         for (const [userId, socketId] of userSocketMap.entries()) {
@@ -197,4 +199,4 @@ const setupSocket = (server) => {
     });
 }
 
-export default setupSocket;
+export { setupSocket, io, userSocketMap };

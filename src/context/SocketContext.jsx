@@ -6,7 +6,7 @@ import {
     addChannel,
     setChannels,
     sortContacts,
-    setOnlineUsers, 
+    setOnlineUsers,
     updateDmContacts,
     updateChannel
 } from "../slices/chatSlice";
@@ -16,9 +16,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const socketContext = createContext(null);
 
-export const useSocket = () => {
-    return useContext(socketContext);
-}
+export const useSocket = () => useContext(socketContext);
 
 export const SocketProvider = ({ children }) => {
     const dispatch = useDispatch();
@@ -42,7 +40,7 @@ export const SocketProvider = ({ children }) => {
                     dispatch(addMessage(message));
                 }
                 // console.log("Message received", message, user._id);
-                dispatch(updateDmContacts({message, userId:user._id}));
+                dispatch(updateDmContacts({ message, userId: user._id }));
                 const contact = user?._id === message?.receiver?._id ? message?.sender : message?.receiver;
                 contact.userId = user?._id
                 contact.sender = message?.sender

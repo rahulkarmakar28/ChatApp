@@ -1,4 +1,4 @@
-import ChatHeader from "@/components/chat/ChatHeader";
+import ChatHeader from "@/components/chat/chatHeader/ChatHeader";
 import MessageBar from "@/components/chat/MessageBar";
 import MessageContainer from "@/components/chat/MessageContainer";
 
