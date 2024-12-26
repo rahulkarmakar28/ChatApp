@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ImFolderOpen } from 'react-icons/im';
 import { IoMdDownload } from 'react-icons/io';
 import { BiLoaderAlt } from 'react-icons/bi';
@@ -6,29 +6,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setDownload } from '../../../slices/chatSlice';
 import { downloadFile } from '../../../utils/fileUtils';
 
-const FileMessage = ({ fileData, isReceived, onImageClick, timestamp, onEdit, onDelete }) => {
+const FileMessage = ({ fileData, isReceived, onImageClick }) => {
   const dispatch = useDispatch();
   const { isDownload } = useSelector((state) => state.chat);
   const isImage = fileData.name.match(/\.(jpeg|jpg|gif|png|bmp|tiff|tif|webp|svg|ico|heic|heif)$/);
-  const [showMenu, setShowMenu] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-
-  const handleMenuToggle = () => setShowMenu(!showMenu);
-  
-  const handleDelete = () => {
-    setShowModal(true);
-    setShowMenu(false);
-  };
-
-  const handleEdit = () => {
-    onEdit(fileData);
-    setShowMenu(false);
-  };
-
-  const handleCancel = () => setShowModal(false);
-
-  const isEditable = Date.now() - timestamp <= 300000; // 5 minutes in ms
-  const isDeletable = Date.now() - timestamp <= 300000; // 5 minutes in ms
 
   const handleDownload = async () => {
     dispatch(setDownload(true));
@@ -42,17 +23,8 @@ const FileMessage = ({ fileData, isReceived, onImageClick, timestamp, onEdit, on
         ? "bg-[#8417ff]/5 text-[#8417ff]/90 border-[#8417ff]/50"
         : "bg-[#2a2b33]/5 text-white/80 border-white/20"
         } border inline-block py-1 px-3 rounded my-1 max-w-[60%] max-sm:max-w-[90%] break-words`}
-      onMouseEnter={handleMenuToggle}
-      onMouseLeave={handleMenuToggle}
     >
-      <div className="relative">
-        {showMenu && !isReceived && (
-          <div className="absolute top-0 right-0 bg-black text-white rounded p-2 flex flex-col">
-            {isEditable && <button onClick={handleEdit} className="hover:bg-gray-700 p-2">Edit</button>}
-            {isDeletable && <button onClick={handleDelete} className="hover:bg-gray-700 p-2">Delete</button>}
-          </div>
-        )}
-
+      <div>
         {isImage ? (
           <div className="cursor-pointer">
             <img
@@ -88,18 +60,6 @@ const FileMessage = ({ fileData, isReceived, onImageClick, timestamp, onEdit, on
           </div>
         )}
       </div>
-
-      {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
-          <div className="bg-white p-5 rounded">
-            <p>Are you sure you want to delete this file?</p>
-            <div className="flex justify-between mt-3">
-              <button onClick={handleCancel} className="bg-gray-300 p-2 rounded">Cancel</button>
-              <button onClick={onDelete} className="bg-red-500 text-white p-2 rounded">Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
