@@ -18,6 +18,11 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
+      # REMOVE OLD IMAGE
+      - name: Remove Existing Image
+        run: |
+          sudo docker rmi rahul28112002/neochat-server:latest || true
+          
       # PULL DOCKER IMAGE FROM DOCKER HUB
       - name: Docker Pull
         run: sudo docker pull rahul28112002/neochat-server:latest
@@ -28,26 +33,11 @@ jobs:
           sudo docker stop neochat-server-container || true
           sudo docker rm -f neochat-server-container || true
 
-      # PRINT ENVIRONMENT VARIABLES
-      - name: Print Environment Variables
-        run: |
-          echo "DATABASE_URI=${{ secrets.DATABASE_URI }}"
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}"
-          echo "REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}"
-          echo "CRYPTR_SECRET=${{ secrets.CRYPTR_SECRET }}"
-          echo "CLOUD_NAME=${{ secrets.CLOUD_NAME }}"
-          echo "API_KEY=${{ secrets.API_KEY }}"
-          echo "API_SECRET=${{ secrets.API_SECRET }}"
-          echo "FOLDER_NAME=${{ secrets.FOLDER_NAME }}"
-          echo "FRONTEND_URL=${{ secrets.FRONTEND_URL }}"
-          echo "MAIL_HOST=${{ secrets.MAIL_HOST }}"
-          echo "MAIL_USER=${{ secrets.MAIL_USER }}"
-          echo "MAIL_PASS=${{ secrets.MAIL_PASS }}"
-
       # RUN NEW DOCKER CONTAINER
       - name: Run Docker Container
         run: |
           sudo docker run -d \
+          --restart unless-stopped \
           -p "${{ secrets.PORT }}:${{ secrets.PORT }}" \
           --env "PORT=${{ secrets.PORT }}" \
           --env "DATABASE_URI=${{ secrets.DATABASE_URI }}" \
@@ -64,3 +54,7 @@ jobs:
           --env "MAIL_PASS=${{ secrets.MAIL_PASS }}" \
           --name neochat-server-container \
           rahul28112002/neochat-server:latest
+      # VERIFY CONTAINER IS RUNNING
+      - name: Verify Docker Container Health
+        run: |
+          sudo docker ps | grep neochat-server-container

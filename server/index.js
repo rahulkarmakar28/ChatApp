@@ -47,7 +47,12 @@ app.use('/api/v1/profile', profileRoute);
 app.get('/', (req, res) => {
     res.send(`This is Backend of Rahul's Chat App`);
 });
-
+app.get('/health', (req, res) => {
+    res.json({ success: true, message: "Server is healthy" });
+});
+app.get('/check-cors', (req, res) => {
+    res.json({ success: true, message: `frontend url:${process.env.FRONTEND_URL}` });
+});
 server.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
