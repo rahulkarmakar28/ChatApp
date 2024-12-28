@@ -15,7 +15,7 @@ const setupSocket = (server) => {
         server, {
         cors: {
             origin: process.env.FRONTEND_URL,
-            methods: ['GET', 'POST'],
+            methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
             credentials: true
         }
     })
